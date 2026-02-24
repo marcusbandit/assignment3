@@ -43,50 +43,108 @@ public class ArrayList<E> implements List<E> {
 
     @Override
     public @NotNull E get(int pos) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("This operation is not yet implemented!");
-        // TODO needs implementation (Assignment 3a)
+        // checks if the position is out of bounds
+        if (pos < 0 || pos >= size) {
+            // throws an exception if the position is out of bounds in nice colored text
+            throw new IndexOutOfBoundsException("\033[31mPosition is out of bounds\033[0m");
+        }
+        // returns the element at the given position
+        return list[pos];
     }
 
     @Override
     public E set(int pos, @NotNull E e) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("This operation is not yet implemented!");
-        // TODO needs implementation (Assignment 3a)
+        // checks if the position is out of bounds
+        if (pos < 0 || pos >= size) {
+            throw new IndexOutOfBoundsException("\033[31mPosition is out of bounds\033[0m");
+        }
+        // checks if the element is null
+        if (e == null) {
+            throw new IllegalArgumentException("\033[31mElement is null\033[0m");
+        }
+        E old = list[pos];
+        list[pos] = e;
+        return old;
     }
 
     @Override
     public boolean add(@NotNull E e) {
-        throw new UnsupportedOperationException("This operation is not yet implemented!");
-        // TODO needs implementation (Assignment 3a)
+        if (e == null) {
+            throw new IllegalArgumentException("\033[31mElement is null\033[0m");
+        }
+        if (size == list.length) {
+            list = resize(list.length * 2);
+        }
+        list[size] = e;
+        size++;
+        return true;
     }
 
     @Override
     public boolean add(int pos, @NotNull E e) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("This operation is not yet implemented!");
-        // TODO needs implementation (Assignment 3a)
+        if (pos < 0 || pos > size) {
+            throw new IndexOutOfBoundsException("\033[31mPosition is out of bounds\033[0m");
+        }
+        if (e == null) {
+            throw new IllegalArgumentException("\033[31mElement is null\033[0m");
+        }
+        if (size == list.length) {
+            list = resize(list.length * 2);
+        }
+        for (int i = size; i > pos; i--) {
+            list[i] = list[i - 1];
+        }
+        list[pos] = e;
+        size++;
+        return true;
     }
 
     @Override
     public E remove(int pos) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("This operation is not yet implemented!");
-        // TODO needs implementation (Assignment 3a)
+        if (pos < 0 || pos >= size) {
+            throw new IndexOutOfBoundsException("\033[31mPosition is out of bounds\033[0m");
+        }
+        E old = list[pos];
+        for (int i = pos; i < size - 1; i++) {
+            list[i] = list[i + 1];
+        }
+        size--;
+        return old;
     }
 
     @Override
     public boolean remove(E e) {
-        throw new UnsupportedOperationException("This operation is not yet implemented!");
-        // TODO needs implementation (Assignment 3a)
+        if (e == null) {
+            throw new IllegalArgumentException("\033[31mElement is null\033[0m");
+        }
+        for (int i = 0; i < size; i++) {
+            if (list[i].equals(e)) {
+                remove(i);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public int indexOf(E e) {
-        throw new UnsupportedOperationException("This operation is not yet implemented!");
-        // TODO needs implementation (Assignment 3a)
+        if (e == null) {
+            throw new IllegalArgumentException("\033[31mElement is null\033[0m");
+        }
+        for (int i = 0; i < size; i++) {
+            if (list[i].equals(e)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public void sort(@NotNull Comparator<? super E> c) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This operation is not yet implemented!");
-        // TODO needs implementation (Assignment 3b)
+        if (c == null) {
+            throw new IllegalArgumentException("\033[31mComparator is null\033[0m");
+        }
+        java.util.Arrays.sort(list, 0, size, c);
     }
 
     /**
@@ -103,7 +161,10 @@ public class ArrayList<E> implements List<E> {
         return (E[]) new Object[length];
     }
 
-    // TODO probably some private helper methods here (avoiding duplicated code)
-    //      (Assignment 3a)
+    private E[] resize(int newSize) {
+        E[] newList = createEmptyArray(newSize);
+        System.arraycopy(list, 0, newList, 0, size);
+        return newList;
+    }
 
 }

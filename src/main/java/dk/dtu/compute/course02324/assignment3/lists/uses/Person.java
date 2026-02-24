@@ -10,8 +10,8 @@ public class Person implements Comparable<Person> {
 
     Person(@NotNull String name, @NotNull double weight) {
         if (name == null || weight <= 0) {
-            throw new IllegalArgumentException("A persons must be initialized with a" +
-                    "(non null) name and an age greater than 0");
+            throw new IllegalArgumentException("\033[31mA persons must be initialized with a" +
+                    "(non null) name and an age greater than 0\033[0m");
         }
         this.name = name;
         this.weight = weight;
@@ -20,11 +20,13 @@ public class Person implements Comparable<Person> {
     @Override
     public int compareTo(@NotNull Person o) {
         if (o == null) {
-            throw new IllegalArgumentException("Argument of compareTo() must not be null");
+            throw new IllegalArgumentException("\033[31mArgument of compareTo() must not be null\033[0m");
         }
-
-        // TODO this must be implemented properly according
-        throw new UnsupportedOperationException("This operation is not yet implemented");
+        int nameCompare = this.name.compareTo(o.name);
+        if (nameCompare != 0) {
+            return nameCompare;
+        }
+        return Double.compare(this.weight, o.weight);
     }
 
     /**

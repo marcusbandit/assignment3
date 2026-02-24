@@ -29,15 +29,21 @@ public class BubbleSort {
             throw new IllegalArgumentException("Arguments of the sort function must not be null.");
         }
         boolean swapped;
-        int j = list.size();
+        int n = list.size();
         do {
             swapped = false;
-
-            // TODO implement BubbleSort here (Assignment 3b) based on the code
-            //      from lectures adapted for the use of generic lists and
-            //      comparators (the lecture shows it for arrays of integers only.
-
-        } while(swapped);
+            for (int i = 0; i < n - 1; i++) {
+                T elem1 = list.get(i);
+                T elem2 = list.get(i + 1);
+                if (comp.compare(elem1, elem2) > 0) {
+                    // swap elements at position i and i+1
+                    list.set(i, elem2);
+                    list.set(i + 1, elem1);
+                    swapped = true;
+                }
+            }
+            n--;
+        } while (swapped);
     }
 
 }
