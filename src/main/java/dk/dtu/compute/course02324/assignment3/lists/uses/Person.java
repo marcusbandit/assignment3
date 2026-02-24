@@ -53,23 +53,35 @@ public class Person implements Comparable<Person> {
      * @param o
      * @return
      */
+    /**
+     * Checks whether this person is equal to the given object. Two persons
+     * are considered equal if their names and weights are the same, which
+     * is consistent with the {@link #compareTo(Person)} method.
+     *
+     * @param o the object to compare with
+     * @return {@code true} iff the given object is a Person with the same name and weight
+     */
     @Override
     public boolean equals(Object o) {
-        return super.equals(o);
-
-        // TODO this must be implemented in accordance with the compareTo() method!
-        //      See lectures for course 02324!
-        //      Also add JavaDocs for @param and @return !
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Double.compare(person.weight, weight) == 0 &&
+                name.equals(person.name);
     }
 
+    /**
+     * Returns a hash code for this person, consistent with {@link #equals(Object)}.
+     * If two persons are equal, they will have the same hash code.
+     *
+     * @return a hash code value for this person
+     */
     @Override
     public int hashCode() {
-        return super.hashCode();
-
-        // TODO this must be implemented note that hashcode needs to be consistent
-        //      with equals (o1.equals(o1) implies o1.hashCode() == o2.hashCode())!
-        //      See lectures for course 02324
-        //      Also add JavaDocs should be added
+        int result = name.hashCode();
+        long temp = Double.doubleToLongBits(weight);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 
 

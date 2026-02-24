@@ -70,7 +70,80 @@ public class TestArrayLists extends TestForAllLists{
                 list.size());
     }
 
-    // TODO: there could be some more tests concerning the methods
-    //       clear(), isEmpty(), set(i, E) and add(i, E)
+    @Test
+    public void testClearAndIsEmpty() {
+        Assert.assertTrue("List should be empty initially", list.isEmpty());
+
+        list.add("Alpha");
+        list.add("Beta");
+        Assert.assertFalse("List should not be empty after adding", list.isEmpty());
+        Assert.assertEquals("List size should be 2", 2, list.size());
+
+        list.clear();
+        Assert.assertTrue("List should be empty after clear", list.isEmpty());
+        Assert.assertEquals("List size should be 0 after clear", 0, list.size());
+    }
+
+    @Test
+    public void testSet() {
+        list.add("Alpha");
+        list.add("Beta");
+        list.add("Gamma");
+
+        String old = list.set(1, "Delta");
+        Assert.assertEquals("set should return old element", "Beta", old);
+        Assert.assertEquals("Element at position 1 should be updated", "Delta", list.get(1));
+        Assert.assertEquals("Size should not change after set", 3, list.size());
+
+        Assert.assertThrows(
+                "set with negative index should throw IndexOutOfBoundsException",
+                IndexOutOfBoundsException.class,
+                () -> list.set(-1, "X"));
+
+        Assert.assertThrows(
+                "set with index == size should throw IndexOutOfBoundsException",
+                IndexOutOfBoundsException.class,
+                () -> list.set(list.size(), "X"));
+
+        Assert.assertThrows(
+                "set with null element should throw IllegalArgumentException",
+                IllegalArgumentException.class,
+                () -> list.set(0, null));
+    }
+
+    @Test
+    public void testAddAtPosition() {
+        list.add("Alpha");
+        list.add("Gamma");
+
+        list.add(1, "Beta");
+        Assert.assertEquals("Size should be 3", 3, list.size());
+        Assert.assertEquals("Element at 0 should be Alpha", "Alpha", list.get(0));
+        Assert.assertEquals("Element at 1 should be Beta", "Beta", list.get(1));
+        Assert.assertEquals("Element at 2 should be Gamma", "Gamma", list.get(2));
+
+        list.add(0, "First");
+        Assert.assertEquals("Element at 0 should be First", "First", list.get(0));
+        Assert.assertEquals("Size should be 4", 4, list.size());
+
+        list.add(list.size(), "Last");
+        Assert.assertEquals("Element at end should be Last", "Last", list.get(list.size() - 1));
+        Assert.assertEquals("Size should be 5", 5, list.size());
+
+        Assert.assertThrows(
+                "add with negative index should throw IndexOutOfBoundsException",
+                IndexOutOfBoundsException.class,
+                () -> list.add(-1, "X"));
+
+        Assert.assertThrows(
+                "add with index > size should throw IndexOutOfBoundsException",
+                IndexOutOfBoundsException.class,
+                () -> list.add(list.size() + 1, "X"));
+
+        Assert.assertThrows(
+                "add with null element should throw IllegalArgumentException",
+                IllegalArgumentException.class,
+                () -> list.add(0, null));
+    }
 
 }

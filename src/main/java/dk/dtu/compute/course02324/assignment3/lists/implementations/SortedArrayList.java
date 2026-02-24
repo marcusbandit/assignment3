@@ -51,7 +51,7 @@ public class SortedArrayList<E extends Comparable<E>> extends ArrayList<E> imple
 
     @Override
     public void sort(@NotNull Comparator<? super E> c) {
-        // No-op: SortedArrayList maintains sort order on insert, nothing to do
+        throw new UnsupportedOperationException("\033[31mCannot sort a SortedArrayList\033[0m");
     }
 
     @Override
