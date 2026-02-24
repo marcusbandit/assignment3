@@ -8,6 +8,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -31,7 +32,7 @@ public class PersonsGUI extends GridPane {
 
     private GridPane personsPane;
 
-    private int weightCount = 1;
+    private TextArea exceptionArea;
 
     /**
      * Constructor which sets up the GUI attached a list of persons.
@@ -45,53 +46,125 @@ public class PersonsGUI extends GridPane {
         this.setVgap(5.0);
         this.setHgap(5.0);
 
-        // text filed for user entering a name
-        TextField field = new TextField();
-        field.setPrefColumnCount(5);
-        field.setText("name");
+        // text field for user entering a name
+        TextField nameField = new TextField();
+        nameField.setPrefColumnCount(5);
+        nameField.setText("name");
 
-        // TODO for all buttons installed below, the actions need to properly
-        //      handle (catch) exceptions, and it would be nice if the GUI
-        //      could also show the exceptions thrown by user actions on
-        //      button pressed (cf. Assignment 2).
+        // text field for user entering a weight
+        TextField weightField = new TextField();
+        weightField.setPrefColumnCount(5);
+        weightField.setText("70.0");
 
-        // button for adding a new person to the list (based on
-        // the name in the text field (the weight is just incrementing)
-        // TODO a text field for the weight could be added to this GUI
+        // text field for user entering an index
+        TextField indexField = new TextField();
+        indexField.setPrefColumnCount(5);
+        indexField.setText("0");
+
+        // text area for showing exceptions
+        exceptionArea = new TextArea();
+        exceptionArea.setEditable(false);
+        exceptionArea.setPrefRowCount(3);
+        exceptionArea.setPrefColumnCount(20);
+        exceptionArea.setStyle("-fx-text-fill: red;");
+
+        // button for adding a new person to the list
         Button addButton = new Button("Add");
         addButton.setOnAction(
                 e -> {
-                    Person person = new Person(field.getText(), weightCount++);
-                    persons.add(person);
-                    // makes sure that the GUI is updated accordingly
-                    update();
+                    try {
+                        clearException();
+                        double weight = Double.parseDouble(weightField.getText());
+                        Person person = new Person(nameField.getText(), weight);
+                        persons.add(person);
+                        update();
+                    } catch (Exception ex) {
+                        showException(ex);
+                    }
+                });
+
+        // button for adding a person at a specific index
+        Button addAtButton = new Button("Add at index");
+        addAtButton.setOnAction(
+                e -> {
+                    try {
+                        clearException();
+                        int index = Integer.parseInt(indexField.getText());
+                        double weight = Double.parseDouble(weightField.getText());
+                        Person person = new Person(nameField.getText(), weight);
+                        persons.add(index, person);
+                        update();
+                    } catch (Exception ex) {
+                        showException(ex);
+                    }
+                });
+
+        // button for setting a person at a specific index
+        Button setButton = new Button("Set at index");
+        setButton.setOnAction(
+                e -> {
+                    try {
+                        clearException();
+                        int index = Integer.parseInt(indexField.getText());
+                        double weight = Double.parseDouble(weightField.getText());
+                        Person person = new Person(nameField.getText(), weight);
+                        persons.set(index, person);
+                        update();
+                    } catch (Exception ex) {
+                        showException(ex);
+                    }
+                });
+
+        // button for removing a person at a specific index
+        Button removeAtButton = new Button("Remove at index");
+        removeAtButton.setOnAction(
+                e -> {
+                    try {
+                        clearException();
+                        int index = Integer.parseInt(indexField.getText());
+                        persons.remove(index);
+                        update();
+                    } catch (Exception ex) {
+                        showException(ex);
+                    }
                 });
 
         Comparator<Person> comparator = new GenericComparator<>();
 
-        // button for sorting the list (according to the order of Persons,
-        // which implement the interface Comparable, which is converted
-        // to a Comparator by the GenericComparator above)
+        // button for sorting the list
         Button sortButton = new Button("Sort");
         sortButton.setOnAction(
                 e -> {
-                    persons.sort(comparator);
-                    // makes sure that the GUI is updated accordingly
-                    update();
+                    try {
+                        clearException();
+                        persons.sort(comparator);
+                        update();
+                    } catch (Exception ex) {
+                        showException(ex);
+                    }
                 });
 
         // button for clearing the list
         Button clearButton = new Button("Clear");
         clearButton.setOnAction(
                 e -> {
-                    persons.clear();
-                    // makes sure that the GUI is updated accordingly
-                    update();
+                    try {
+                        clearException();
+                        persons.clear();
+                        update();
+                    } catch (Exception ex) {
+                        showException(ex);
+                    }
                 });
 
         // combines the above elements into vertically arranged boxes
         // which are then added to the left column of the grid pane
-        VBox actionBox = new VBox(field, addButton, sortButton, clearButton);
+        VBox actionBox = new VBox(
+                new Label("Name:"), nameField,
+                new Label("Weight:"), weightField,
+                new Label("Index:"), indexField,
+                addButton, addAtButton, setButton, removeAtButton,
+                sortButton, clearButton);
         actionBox.setSpacing(5.0);
         this.add(actionBox, 0, 0);
 
@@ -112,14 +185,16 @@ public class PersonsGUI extends GridPane {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
+        Label labelExceptions = new Label("Exceptions:");
+
         // ... and adds these elements to the right-hand columns of
         // the grid pane
-        VBox personsList = new VBox(labelPersonsList, scrollPane);
+        VBox personsList = new VBox(labelPersonsList, scrollPane, labelExceptions, exceptionArea);
         personsList.setSpacing(5.0);
         this.add(personsList, 1, 0);
 
         // updates the values of the different components with the values from
-        // the stack
+        // the list
         update();
     }
 
@@ -137,8 +212,13 @@ public class PersonsGUI extends GridPane {
             Button deleteButton = new Button("Delete");
             deleteButton.setOnAction(
                     e -> {
-                        persons.remove(person);
-                        update();
+                        try {
+                            clearException();
+                            persons.remove(person);
+                            update();
+                        } catch (Exception ex) {
+                            showException(ex);
+                        }
                     }
             );
             HBox entry = new HBox(deleteButton, personLabel);
@@ -148,9 +228,12 @@ public class PersonsGUI extends GridPane {
         }
     }
 
-    // TODO this GUI could be extended by some additional widgets for issuing other
-    //      operations of lists. And the possibly thrown exceptions should be caught
-    //      in the event handler (and possibly shown in an additional text area for
-    //      exceptions; see Assignment 2).
+    private void showException(Exception ex) {
+        exceptionArea.setText(ex.getClass().getSimpleName() + ": " + ex.getMessage());
+    }
+
+    private void clearException() {
+        exceptionArea.setText("");
+    }
 
 }
